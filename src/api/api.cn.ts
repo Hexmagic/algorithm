@@ -1,4 +1,4 @@
-import axios, { AxiosError, AxiosRequestConfig } from 'axios'
+import axios, { AxiosError, AxiosRequestConfig, all } from 'axios'
 import { cache } from '../cache'
 import {
 	ConciseQuestion,
@@ -120,7 +120,7 @@ async function graphql<T>(data: GraphqlRequestData): Promise<T> {
 		method: 'POST',
 		headers: {
 			origin: DomainCN,
-			referer: `${DomainCN}/problemset/all/`,
+			referer: `${DomainCN}/contest/`,
 			...headers,
 		},
 	}).then((res) => {
@@ -311,6 +311,22 @@ const config = {
 	},
 }
 
+function filterContest(allContests) {
+	// 过滤title相同的竞赛
+	let names = new Set();
+	let N = allContests.length;
+	let ans: any[] = [];
+	for (var i = 0; i < N; i++) {
+		let title = allContests[i].title;
+		if (names.has(title)) {
+			continue;
+		}
+		names.add(title);
+		ans.push(allContests[i]);
+	}
+	return ans;
+}
+
 export const api = {
 	refreshQuestions,
 	getAllQuestions,
@@ -321,7 +337,7 @@ export const api = {
 		return request<Problems>(config.getQuestionsByCategory(categorie))
 	},
 	fetchContests() {
-		return graphql<ContestData>(config.contests).then((data) => data.allContests)
+		return graphql<ContestData>(config.contests).then((data) => filterContest(data.allContests));
 	},
 	fetchTags(): Promise<TagData> {
 		return request<TagData>(config.tags)
