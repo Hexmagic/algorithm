@@ -313,15 +313,15 @@ const config = {
 
 function filterContest(allContests) {
 	// 过滤title相同的竞赛
-	let names = new Set();
+	let times = new Set();
 	let N = allContests.length;
 	let ans: any[] = [];
 	for (var i = 0; i < N; i++) {
-		let title = allContests[i].title;
-		if (names.has(title)) {
+		let startTime = allContests[i].startTime;
+		if (times.has(startTime)) {
 			continue;
 		}
-		names.add(title);
+		times.add(startTime);
 		ans.push(allContests[i]);
 	}
 	return ans;
