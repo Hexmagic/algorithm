@@ -9,6 +9,7 @@ import {
 	CheckResponse,
 	SubmitOptions,
 	SubmitResponse,
+	ContestStatus,
 	TagData,
 	QuestionTranslationData,
 	TodayRecordData,
@@ -195,6 +196,12 @@ const config = {
 			method: 'GET',
 		}
 	},
+	getContestStatus(titleSlug: string): AxiosRequestConfig {
+		return {
+			url: `${DomainCN}/contest/api/myranking/${titleSlug}/?region=local`,
+			method: 'GET',
+		}
+	},
 	getQuestionDetail(titleSlug: string) {
 		return {
 			operationName: 'questionData',
@@ -313,18 +320,18 @@ const config = {
 
 function filterContest(allContests) {
 	// 过滤title相同的竞赛
-	let times = new Set();
-	let N = allContests.length;
-	let ans: any[] = [];
-	for (var i = 0; i < N; i++) {
-		let startTime = allContests[i].startTime;
+	const times = new Set()
+	const N = allContests.length
+	const ans: any[] = []
+	for (let i = 0; i < N; i++) {
+		const startTime = allContests[i].startTime
 		if (times.has(startTime)) {
-			continue;
+			continue
 		}
-		times.add(startTime);
-		ans.push(allContests[i]);
+		times.add(startTime)
+		ans.push(allContests[i])
 	}
-	return ans;
+	return ans
 }
 
 export const api = {
@@ -337,13 +344,16 @@ export const api = {
 		return request<Problems>(config.getQuestionsByCategory(categorie))
 	},
 	fetchContests() {
-		return graphql<ContestData>(config.contests).then((data) => filterContest(data.allContests));
+		return graphql<ContestData>(config.contests).then((data) => filterContest(data.allContests))
 	},
 	fetchTags(): Promise<TagData> {
 		return request<TagData>(config.tags)
 	},
 	fetchContest(titleSlug: string) {
 		return request<ContestDetail>(config.getContest(titleSlug))
+	},
+	fetchContestStatus(titleSlug: string) {
+		return request<ContestStatus>(config.getContestStatus(titleSlug))
 	},
 	fetchTodayRecord(): Promise<TodayRecord[]> {
 		return graphql<TodayRecordData>(config.todayRecord).then((data) => data.todayRecord)
@@ -368,7 +378,13 @@ export const api = {
 		return request<string>(config.getQuestionContest(titleSlug, weekname))
 	},
 	submit(options: SubmitOptions): Promise<SubmitResponse> {
-		return request<SubmitResponse>(config.getSubmit(options))
+		return request<SubmitResponse>(config.getSubmit(options)).then((data) => {
+			if (data && data.submission_id) {
+
+				//  window.showInformationMessage(`提交通过，id: ${data.submission_id}`)
+			}
+			return data
+		})
 	},
 	submitContest(options: SubmitContestOptions): Promise<SubmitResponse> {
 		return request<SubmitResponse>(config.getSubmitContest(options))

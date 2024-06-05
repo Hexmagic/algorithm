@@ -1,5 +1,5 @@
 import { Lang } from '../model/common'
-import { config, DomainCN, DomainEN } from '../config'
+import { config } from '../config'
 export enum Website {
 	Leetcode = 'https://leetcode.com',
 	LeetcodeCn = 'https://leetcode.cn',

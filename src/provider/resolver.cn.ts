@@ -10,6 +10,7 @@ import {
 import { ResolverType } from './resolver'
 import { normalizeQuestions } from '../common/util'
 
+
 export const resolverCn: ResolverType = {
 	Query() {
 		//'Company', 'Favorite',
@@ -143,6 +144,12 @@ export const resolverCn: ResolverType = {
 			}
 			const data = await api.fetchContest(titleSlug)
 			const questions = data.questions
+
+			const data2 = await api.fetchContestStatus(titleSlug)
+			const keys = new Set()
+			for (let i = 0; i < data2.my_solved.length; i++) {
+				keys.add(data2.my_solved[i])
+			}
 			return questions.map((question) => ({
 				type: 'QuestionContest',
 				label: question.title,
@@ -152,6 +159,7 @@ export const resolverCn: ResolverType = {
 					titleSlug: question.title_slug,
 					weekname: titleSlug,
 				},
+				isAC: keys.has(question.question_id),
 			}))
 		},
 	},

@@ -1,7 +1,7 @@
 import * as path from 'path'
 import * as vscode from 'vscode'
 import { api } from '../api/index'
-import { config } from '../config'
+import { DomainCN, DomainEN, config } from '../config'
 import { writeFile, parseHtml } from '../common/util'
 import { preprocessCode, shouldAskForImport, askForImport } from '../util'
 import { CodeLang, enNameLangs, isAlgorithm, langMap } from '../common/langConfig'
@@ -265,9 +265,11 @@ export async function createQuestionPanelCommand(extensionPath: string, param: P
 			const { codeSnippets, questionFrontendId, title, content, translatedContent, translatedTitle, titleSlug } =
 				question
 			//preview
-			let previewText = `# ${title}\n` + content
+			let previewText = ''
 			if (config.lang === 'cn') {
-				previewText = `# ${translatedTitle}\n` + translatedContent
+				previewText = `# [${translatedTitle}](${DomainCN}/problems/${titleSlug}/description)\n` + translatedContent
+			} else {
+				previewText = `# [${title}](${DomainEN}/problems/${titleSlug}/description)\n` + content
 			}
 
 			const codeSnippet = getCodeSnippet(codeSnippets)

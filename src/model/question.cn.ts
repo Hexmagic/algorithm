@@ -161,6 +161,11 @@ export interface SubmitContestOptions extends SubmitOptions {
 }
 export interface SubmitResponse {
 	submission_id: number
+
+}
+export interface ContestStatus {
+	my_solved: string[]
+	registered: boolean
 }
 export interface CheckResponse {
 	status_code: number
